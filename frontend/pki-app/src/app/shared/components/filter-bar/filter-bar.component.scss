@@ -1,0 +1,35 @@
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  color: #fff;
+  flex-wrap: wrap;
+}
+
+.filter-bar span {
+  font-weight: 500;
+}
+
+.filter-bar button {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.filter-bar button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.filter-bar button.active {
+  background: rgba(60, 184, 29, 0.8); /* green accent */
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}

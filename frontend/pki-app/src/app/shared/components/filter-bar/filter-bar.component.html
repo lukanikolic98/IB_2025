@@ -1,0 +1,21 @@
+<div class="filter-bar">
+  <span>Status:</span>
+  <button
+    [class.active]="selectedStatus === 'all'"
+    (click)="changeStatus('all')"
+  >
+    All
+  </button>
+  <button
+    [class.active]="selectedStatus === 'active'"
+    (click)="changeStatus('active')"
+  >
+    Active
+  </button>
+  <button
+    [class.active]="selectedStatus === 'revoked'"
+    (click)="changeStatus('revoked')"
+  >
+    Revoked
+  </button>
+</div>

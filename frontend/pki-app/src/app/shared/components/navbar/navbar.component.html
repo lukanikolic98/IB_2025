@@ -1,22 +1,21 @@
 <div class="navbar-container">
-  <app-nav-button
-    label="Dashboard"
-    (clicked)="onNavigation('/home')"
-  ></app-nav-button>
-  <app-nav-button
-    label="Profile"
-    (clicked)="onNavigation('/home')"
-  ></app-nav-button>
-  <app-nav-button
-    label="Logout"
-    (clicked)="onNavigation('/home')"
-  ></app-nav-button>
-  <app-nav-button
-    label="Home"
-    (clicked)="onNavigation('/home')"
-  ></app-nav-button>
-  <app-nav-button
-    label="Home"
-    (clicked)="onNavigation('/home')"
-  ></app-nav-button>
+  <div class="title">PKI System</div>
+  <div class="button-container">
+    <app-nav-button
+      label="Dashboard"
+      (clicked)="onNavigation('/home')"
+    ></app-nav-button>
+    <app-nav-button
+      label="Profile"
+      (clicked)="onNavigation('/profile')"
+    ></app-nav-button>
+    <app-nav-button
+      label="Logout"
+      (clicked)="onNavigation('/home')"
+    ></app-nav-button>
+    <app-nav-button
+      label="Home"
+      (clicked)="onNavigation('/home')"
+    ></app-nav-button>
+  </div>
 </div>

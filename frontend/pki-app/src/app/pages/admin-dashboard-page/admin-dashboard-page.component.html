@@ -1,1 +1,69 @@
-<p>admin-dashboard-page works!</p>
+<div class="dashboard-container">
+  <h2>Certificates</h2>
+
+  <!-- Table -->
+  <div class="table-container">
+    <!-- Filter Bar -->
+    <app-filter-bar
+      [selectedStatus]="selectedStatus"
+      (statusChange)="setStatusFilter($event)"
+    >
+    </app-filter-bar>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Common Name</th>
+          <th>Organization</th>
+          <th>OU</th>
+          <th>Country</th>
+          <th>Valid From</th>
+          <th>Valid To</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cert of filteredCertificates">
+          <td>{{ cert.id }}</td>
+          <td>{{ cert.type }}</td>
+          <td>{{ cert.commonName }}</td>
+          <td>{{ cert.organization }}</td>
+          <td>{{ cert.organizationalUnit }}</td>
+          <td>{{ cert.country }}</td>
+          <td>{{ cert.startDate }}</td>
+          <td>{{ cert.endDate }}</td>
+          <td>{{ cert.email }}</td>
+          <td [class.revoked]="cert.revoked">
+            {{ cert.revoked ? "Revoked" : "Valid" }}
+          </td>
+          <td class="actions">
+            <button title="Download">
+              <img
+                src="assets/icons/download.svg"
+                alt="Download"
+                class="action-icon"
+              />
+            </button>
+            <button title="Validate">
+              <img
+                src="assets/icons/file-key.svg"
+                alt="Validate"
+                class="action-icon"
+              />
+            </button>
+            <button title="Revoke">
+              <img
+                src="assets/icons/file-minus.svg"
+                alt="Revoke"
+                class="action-icon"
+              />
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
