@@ -1,0 +1,93 @@
+// /* create-certificate-form.component.scss */
+// .certificate-form {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 16px;
+//   padding: 32px;
+//   background: rgba(255, 255, 255, 0.04);
+//   border-radius: 12px;
+//   backdrop-filter: blur(8px);
+//   max-width: 500px;
+//   color: #fff;
+// }
+
+// .submit-button {
+//   background: rgba(255, 255, 255, 0.04);
+//   color: #fff;
+//   border: none;
+//   padding: 12px 16px;
+//   border-radius: 12px;
+//   font-size: 1rem;
+//   cursor: pointer;
+//   transition: all 0.25s ease;
+// }
+
+// .submit-button:hover {
+//   background: rgba(255, 255, 255, 0.15);
+//   transform: translateY(-2px);
+// }
+
+// .submit-button:active {
+//   transform: scale(0.97);
+// }
+
+.certificate-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  /* Make all reusable components fill available width */
+  app-input-field,
+  app-dropdown-field,
+  app-checkbox-group {
+    width: 100%;
+  }
+
+  /* Checkbox group styling */
+  .checkbox-group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+
+      input {
+        margin: 0;
+      }
+    }
+  }
+
+  /* Submit button styling */
+  .submit-button {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+  }
+
+  .submit-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .submit-button:active {
+    transform: scale(0.97);
+  }
+}
+
+.switch-container {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}

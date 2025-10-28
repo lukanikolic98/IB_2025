@@ -1,0 +1,46 @@
+<form class="certificate-form">
+  <app-dropdown-field
+    label="Certificate Type"
+    id="certType"
+    [options]="[
+      { label: 'Root', value: 'root' },
+      { label: 'Intermediate', value: 'intermediate' },
+      { label: 'End-Entity', value: 'end-entity' }
+    ]"
+  ></app-dropdown-field>
+  <!-- 
+  <app-checkbox-group
+    label="Key Usages"
+    [options]="[
+      { label: 'Digital Signature', value: 'digital_signature' },
+      { label: 'Key Encipherment', value: 'key_encipherment' }
+    ]"
+  ></app-checkbox-group> -->
+  <div class="switch-container">
+    <app-switch
+      label="Digital Signature"
+      [(ngModel)]="digitalSignature"
+      [ngModelOptions]="{ standalone: true }"
+    ></app-switch>
+
+    <app-switch
+      label="Key Encipherment"
+      [(ngModel)]="keyEncipherment"
+      [ngModelOptions]="{ standalone: true }"
+    ></app-switch>
+  </div>
+
+  <app-input-field label="Issuer (Parent CA)" id="issuer"></app-input-field>
+  <app-input-field label="Common Name (CN)" id="cn"></app-input-field>
+  <app-input-field label="Organization (O)" id="org"></app-input-field>
+  <app-input-field label="Organizational Unit (OU)" id="ou"></app-input-field>
+  <app-input-field label="Country (C)" id="country"></app-input-field>
+  <app-input-field label="Email (E)" id="email"></app-input-field>
+  <app-input-field
+    label="Validity (days)"
+    id="validity"
+    type="number"
+  ></app-input-field>
+
+  <button type="submit" class="submit-button">Create Certificate</button>
+</form>

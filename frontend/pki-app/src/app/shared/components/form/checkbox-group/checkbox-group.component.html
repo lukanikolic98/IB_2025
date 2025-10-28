@@ -1,0 +1,10 @@
+<div class="checkbox-container">
+  <span class="group-label">{{ label }}</span>
+  <div class="checkbox-group">
+    <label *ngFor="let option of options">
+      <input type="checkbox" [value]="option.value" />
+      <span class="custom-checkbox"></span>
+      {{ option.label }}
+    </label>
+  </div>
+</div>
