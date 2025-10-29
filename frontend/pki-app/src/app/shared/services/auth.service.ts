@@ -13,7 +13,7 @@ import { jwtDecode, JwtPayload } from 'jwt-decode';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:8080/auth';
+  private readonly API_URL = 'https://localhost:8080/auth';
   public isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
     false
   );

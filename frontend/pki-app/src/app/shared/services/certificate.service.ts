@@ -7,7 +7,7 @@ import { Certificate, CertificateRequest } from '../../types/certificate';
   providedIn: 'root',
 })
 export class CertificateService {
-  private apiUrl = 'http://localhost:8080/certificates';
+  private apiUrl = 'https://localhost:8080/certificates';
 
   constructor(private http: HttpClient) {}
 
