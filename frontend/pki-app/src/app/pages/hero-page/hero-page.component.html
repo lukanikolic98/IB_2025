@@ -1,5 +1,15 @@
-<h1>Public Key Infrastructure app</h1>
-<p>hero-page works!</p>
-<app-button>Login</app-button>
-or
-<app-button>Register</app-button>
+<section class="hero-container">
+  <div class="hero-content">
+    <h1>Public Key Infrastructure App</h1>
+    <p>Secure your digital world with certificates and cryptography.</p>
+
+    <div class="button-container">
+      <app-button label="Login" (clicked)="onNavigation('/login')"></app-button>
+      <span class="divider">or</span>
+      <app-button
+        label="Register"
+        (clicked)="onNavigation('/register')"
+      ></app-button>
+    </div>
+  </div>
+</section>

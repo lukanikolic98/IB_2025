@@ -1,30 +1,88 @@
 import { Injectable } from '@angular/core';
 import {
+  HttpErrorResponse,
   HttpEvent,
   HttpHandler,
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  filter,
+  Observable,
+  switchMap,
+  take,
+  throwError,
+} from 'rxjs';
+import { AuthService } from '../shared/services/auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  private isRefreshing = false;
+  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
+    null
+  );
+
+  constructor(private authService: AuthService) {}
+
   intercept(
-    req: HttpRequest<any>,
+    request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    // Get the token from localStorage
-    const token = localStorage.getItem('accessToken');
-
-    // Only add the token if it exists and it's a backend API request
-    if (token && req.url.startsWith('http://localhost:8080/api')) {
-      const authReq = req.clone({
-        setHeaders: { Authorization: `Bearer ${token}` },
-      });
-      return next.handle(authReq);
+    // Dodaj token samo ako nije zahtev za login ili refresh
+    if (!request.url.includes('/auth/')) {
+      request = this.addToken(request, this.authService.getAccessToken());
     }
 
-    // Otherwise, forward the request unmodified
-    return next.handle(req);
+    return next.handle(request).pipe(
+      catchError((error) => {
+        if (error instanceof HttpErrorResponse && error.status === 401) {
+          return this.handle401Error(request, next);
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+
+  private addToken(request: HttpRequest<any>, token: string | null) {
+    if (!token) return request;
+    return request.clone({
+      headers: request.headers.set('Authorization', `Bearer ${token}`),
+    });
+  }
+
+  private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
+    if (!this.isRefreshing) {
+      this.isRefreshing = true;
+      this.refreshTokenSubject.next(null);
+
+      const refreshToken = this.authService.getRefreshToken();
+      if (refreshToken) {
+        return this.authService.refreshToken(refreshToken).pipe(
+          switchMap((response: any) => {
+            this.isRefreshing = false;
+            this.refreshTokenSubject.next(response.accessToken);
+            return next.handle(this.addToken(request, response.accessToken));
+          }),
+          catchError((err) => {
+            this.isRefreshing = false;
+            this.authService.logout(); // Obriši tokene i izbaci korisnika
+            return throwError(() => err);
+          })
+        );
+      } else {
+        this.authService.logout();
+        return throwError(() => new Error('Refresh token nije pronađen.'));
+      }
+    } else {
+      return this.refreshTokenSubject.pipe(
+        filter((token) => token != null),
+        take(1),
+        switchMap((token) => {
+          return next.handle(this.addToken(request, token));
+        })
+      );
+    }
   }
 }

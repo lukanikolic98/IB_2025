@@ -1,1 +1,66 @@
-<p>register-page works!</p>
+<div class="register-container">
+  <form [formGroup]="registerForm" class="register-form">
+    <h2>Register</h2>
+
+    <div class="form-group">
+      <label for="firstname">First Name</label>
+      <input
+        id="firstname"
+        type="text"
+        formControlName="firstname"
+        placeholder="Enter your first name"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="lastname">Last Name</label>
+      <input
+        id="lastname"
+        type="text"
+        formControlName="lastname"
+        placeholder="Enter your last name"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        placeholder="Enter your email"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        placeholder="Enter password"
+        (input)="checkPasswordStrength($any($event.target).value)"
+      />
+      <div class="password-strength">
+        <div class="strength-bar" [ngClass]="passwordStrength"></div>
+        <small>{{ passwordStrengthMessage }}</small>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password</label>
+      <input
+        id="confirmPassword"
+        type="password"
+        formControlName="confirmPassword"
+        placeholder="Confirm password"
+      />
+    </div>
+
+    <app-button label="Register" (clicked)="submitRegister()"></app-button>
+
+    <p class="register-link">
+      Already have an account? <a routerLink="/login">Login</a>
+    </p>
+  </form>
+</div>

@@ -1,0 +1,21 @@
+button {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.6rem 1.4rem;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  height: 48px;
+}
+
+button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: scale(0.97);
+}

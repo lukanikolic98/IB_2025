@@ -27,12 +27,12 @@ public class AuthService {
   @Autowired
   private EmailService emailService;
 
-  public String registerUser(RegisterRequest request) {
+  public VerificationToken registerRegularUser(RegisterRequest request) {
 
     System.out.println(request.toString());
 
     if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-      throw new RuntimeException("Email already in use");
+      throw new RuntimeException("Email already taken");
     }
 
     User user = new User();
@@ -54,19 +54,19 @@ public class AuthService {
 
     tokenRepository.save(token);
 
-    String verificationLink = "https://localhost:8080/auth/verify?token=" + token.getToken();
+    String verificationLink = "https://localhost:8080/auth/confirm-registration?token=" + token.getToken();
     emailService.sendEmail(user.getEmail(), "Verify your account",
         "Click the link to activate your account: " + verificationLink);
 
-    return "Registration successful, please check your email to verify your account.";
+    return token;
   }
 
-  public String verifyToken(String tokenStr) {
+  public void verifyToken(String tokenStr) {
     VerificationToken token = tokenRepository.findByToken(tokenStr)
         .orElseThrow(() -> new RuntimeException("Invalid token"));
 
     if (token.isUsed()) {
-      throw new RuntimeException("Token already used");
+      throw new RuntimeException("Token already used, account already activated");
     }
 
     if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
@@ -80,6 +80,6 @@ public class AuthService {
     user.setActivated(true);
     userRepository.save(user);
 
-    return "Account successfully verified! You can now log in.";
+    return;
   }
 }
