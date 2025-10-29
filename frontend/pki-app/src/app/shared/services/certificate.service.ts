@@ -1,0 +1,61 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Certificate, CertificateRequest } from '../../types/certificate';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CertificateService {
+  private apiUrl = 'http://localhost:8080/certificates';
+
+  constructor(private http: HttpClient) {}
+
+  getAllCertificates(): Observable<Certificate[]> {
+    // Uklanjamo rucno dodavanje tokena jer ce interceptor to uraditi automatski
+    return this.http.get<Certificate[]>(this.apiUrl);
+  }
+
+  createCertificate(request: CertificateRequest): Observable<Certificate> {
+    // Interceptor ce automatski dodati token
+    return this.http.post<Certificate>(`${this.apiUrl}/create`, request);
+  }
+
+  revokeCertificate(id: number, reasonCode: number): Observable<string> {
+    return this.http.post<string>(
+      `${this.apiUrl}/${id}/revoke?reasonCode=${reasonCode}`,
+      null,
+      { responseType: 'text' as 'json' }
+    );
+  }
+
+  // downloadCertificate(id: number): Observable<Blob> {
+  //   return this.http.get(`${this.apiUrl}/${id}/download-certificate`, {
+  //     responseType: 'blob'
+  //   });
+  // }
+  //
+  // downloadPrivateKey(id: number): Observable<Blob> {
+  //   return this.http.get(`${this.apiUrl}/${id}/download-private-key`, {
+  //     responseType: 'blob'
+  //   });
+  // }
+
+  downloadKeystore(id: number, password: string): Observable<Blob> {
+    // Slanje lozinke kao query parametra
+    return this.http.get(`${this.apiUrl}/${id}/download-keystore`, {
+      params: { password: password },
+      responseType: 'blob',
+    });
+  }
+
+  isCertificateValid(id: number): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/${id}/validate`);
+  }
+
+  downloadCrl(caId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${caId}/crl`, {
+      responseType: 'blob',
+    });
+  }
+}

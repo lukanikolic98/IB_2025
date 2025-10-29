@@ -48,6 +48,19 @@
 			<scope>test</scope>
 		</dependency>
 
+				<!-- Bouncy Castle X509Name-->
+			<dependency>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcprov-jdk15on</artifactId>
+					<version>1.70</version>
+					<scope>compile</scope>
+			</dependency>
+			<dependency>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcpkix-jdk15on</artifactId>
+					<version>1.70</version>
+					<scope>compile</scope>
+			</dependency>
 				<!-- H2 Database, Lombok-->
 		<dependency>
 			<groupId>com.h2database</groupId>

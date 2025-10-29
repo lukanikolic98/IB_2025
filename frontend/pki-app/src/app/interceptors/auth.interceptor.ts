@@ -1,88 +1,97 @@
-import { Injectable } from '@angular/core';
+// auth.interceptor.fn.ts
+import { inject } from '@angular/core';
 import {
-  HttpErrorResponse,
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
   HttpRequest,
+  HttpHandlerFn,
+  HttpEvent,
+  HttpErrorResponse,
 } from '@angular/common/http';
 import {
-  BehaviorSubject,
-  catchError,
-  filter,
   Observable,
+  BehaviorSubject,
+  throwError,
+  filter,
   switchMap,
   take,
-  throwError,
+  catchError,
 } from 'rxjs';
 import { AuthService } from '../shared/services/auth.service';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
-    null
+const refreshTokenSubject = new BehaviorSubject<string | null>(null);
+let isRefreshing = false;
+
+export const authInterceptorFn = (
+  req: HttpRequest<any>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<any>> => {
+  const authService = inject(AuthService);
+
+  // Skip /auth/ endpoints
+  if (!req.url.includes('/auth/')) {
+    const token = authService.getAccessToken();
+    if (token) {
+      req = req.clone({
+        withCredentials: true,
+        setHeaders: { Authorization: `Bearer ${token}` },
+      });
+    }
+  }
+
+  return next(req).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401 && !req.url.includes('/auth/refresh')) {
+        return handle401Error(req, next, authService);
+      }
+      return throwError(() => error);
+    })
   );
+};
 
-  constructor(private authService: AuthService) {}
+function handle401Error(
+  req: HttpRequest<any>,
+  next: HttpHandlerFn,
+  authService: AuthService
+): Observable<HttpEvent<any>> {
+  if (!isRefreshing) {
+    isRefreshing = true;
+    refreshTokenSubject.next(null);
 
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    // Dodaj token samo ako nije zahtev za login ili refresh
-    if (!request.url.includes('/auth/')) {
-      request = this.addToken(request, this.authService.getAccessToken());
+    const refreshToken = authService.getRefreshToken();
+    if (!refreshToken) {
+      authService.logout();
+      return throwError(() => new Error('Refresh token not found'));
     }
 
-    return next.handle(request).pipe(
-      catchError((error) => {
-        if (error instanceof HttpErrorResponse && error.status === 401) {
-          return this.handle401Error(request, next);
-        }
-        return throwError(() => error);
-      })
-    );
-  }
-
-  private addToken(request: HttpRequest<any>, token: string | null) {
-    if (!token) return request;
-    return request.clone({
-      headers: request.headers.set('Authorization', `Bearer ${token}`),
-    });
-  }
-
-  private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
-    if (!this.isRefreshing) {
-      this.isRefreshing = true;
-      this.refreshTokenSubject.next(null);
-
-      const refreshToken = this.authService.getRefreshToken();
-      if (refreshToken) {
-        return this.authService.refreshToken(refreshToken).pipe(
-          switchMap((response: any) => {
-            this.isRefreshing = false;
-            this.refreshTokenSubject.next(response.accessToken);
-            return next.handle(this.addToken(request, response.accessToken));
-          }),
-          catchError((err) => {
-            this.isRefreshing = false;
-            this.authService.logout(); // Obriši tokene i izbaci korisnika
-            return throwError(() => err);
+    return authService.refreshToken(refreshToken).pipe(
+      switchMap((tokens: any) => {
+        isRefreshing = false;
+        refreshTokenSubject.next(tokens.accessToken);
+        return next(
+          req.clone({
+            withCredentials: true,
+            setHeaders: { Authorization: `Bearer ${tokens.accessToken}` },
           })
         );
-      } else {
-        this.authService.logout();
-        return throwError(() => new Error('Refresh token nije pronađen.'));
-      }
-    } else {
-      return this.refreshTokenSubject.pipe(
-        filter((token) => token != null),
-        take(1),
-        switchMap((token) => {
-          return next.handle(this.addToken(request, token));
-        })
-      );
-    }
+      }),
+      catchError((err) => {
+        isRefreshing = false;
+        authService.logout();
+        return throwError(() => err);
+      })
+    );
+  } else {
+    // Wait until refresh is done
+    return refreshTokenSubject.pipe(
+      filter((token) => token != null),
+      take(1),
+      switchMap((token) => {
+        return next(
+          req.clone({
+            withCredentials: true,
+            setHeaders: { Authorization: `Bearer ${token}` },
+          })
+        );
+      })
+    );
   }
 }

@@ -39,21 +39,21 @@
             {{ cert.revoked ? "Revoked" : "Valid" }}
           </td>
           <td class="actions">
-            <button title="Download">
+            <button title="Download" (click)="downloadCertificate(cert)">
               <img
                 src="assets/icons/download.svg"
                 alt="Download"
                 class="action-icon"
               />
             </button>
-            <button title="Validate">
+            <button title="Validate" (click)="validateCertificate(cert)">
               <img
                 src="assets/icons/file-key.svg"
                 alt="Validate"
                 class="action-icon"
               />
             </button>
-            <button title="Revoke">
+            <button title="Revoke" (click)="revokeCertificate(cert)">
               <img
                 src="assets/icons/file-minus.svg"
                 alt="Revoke"

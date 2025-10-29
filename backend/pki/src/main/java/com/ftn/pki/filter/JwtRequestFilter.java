@@ -34,7 +34,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     // Dont include these paths in jwt check
     String path = request.getRequestURI();
-    if (path.startsWith("/auth") || path.startsWith("/h2-console") || path.startsWith("/api/movies/recommendation")) {
+    if (path.startsWith("/auth") || path.startsWith("/h2-console")) {
       chain.doFilter(request, response);
       return;
     }

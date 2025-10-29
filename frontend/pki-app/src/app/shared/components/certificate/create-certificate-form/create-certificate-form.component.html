@@ -1,4 +1,4 @@
-<form class="certificate-form">
+<form class="certificate-form" (ngSubmit)="onSubmit()" #form="ngForm">
   <app-dropdown-field
     label="Certificate Type"
     id="certType"
@@ -7,38 +7,75 @@
       { label: 'Intermediate', value: 'intermediate' },
       { label: 'End-Entity', value: 'end-entity' }
     ]"
+    [(ngModel)]="formData.type"
+    name="type"
+    required
   ></app-dropdown-field>
-  <!-- 
-  <app-checkbox-group
-    label="Key Usages"
-    [options]="[
-      { label: 'Digital Signature', value: 'digital_signature' },
-      { label: 'Key Encipherment', value: 'key_encipherment' }
-    ]"
-  ></app-checkbox-group> -->
+
   <div class="switch-container">
     <app-switch
       label="Digital Signature"
-      [(ngModel)]="digitalSignature"
-      [ngModelOptions]="{ standalone: true }"
+      [(ngModel)]="formData.digitalSignature"
+      name="digitalSignature"
     ></app-switch>
 
     <app-switch
       label="Key Encipherment"
-      [(ngModel)]="keyEncipherment"
-      [ngModelOptions]="{ standalone: true }"
+      [(ngModel)]="formData.keyEncipherment"
+      name="keyEncipherment"
     ></app-switch>
   </div>
 
-  <app-input-field label="Issuer (Parent CA)" id="issuer"></app-input-field>
-  <app-input-field label="Common Name (CN)" id="cn"></app-input-field>
-  <app-input-field label="Organization (O)" id="org"></app-input-field>
-  <app-input-field label="Organizational Unit (OU)" id="ou"></app-input-field>
-  <app-input-field label="Country (C)" id="country"></app-input-field>
-  <app-input-field label="Email (E)" id="email"></app-input-field>
+  <app-input-field
+    label="Issuer (Parent CA)"
+    id="issuer"
+    [(ngModel)]="formData.issuerId"
+    name="issuerId"
+    type="number"
+  ></app-input-field>
+
+  <app-input-field
+    label="Common Name (CN)"
+    id="cn"
+    [(ngModel)]="formData.commonName"
+    name="commonName"
+    required
+  ></app-input-field>
+
+  <app-input-field
+    label="Organization (O)"
+    id="org"
+    [(ngModel)]="formData.organization"
+    name="organization"
+  ></app-input-field>
+
+  <app-input-field
+    label="Organizational Unit (OU)"
+    id="ou"
+    [(ngModel)]="formData.organizationalUnit"
+    name="organizationalUnit"
+  ></app-input-field>
+
+  <app-input-field
+    label="Country (C)"
+    id="country"
+    [(ngModel)]="formData.country"
+    name="country"
+  ></app-input-field>
+
+  <app-input-field
+    label="Email (E)"
+    id="email"
+    [(ngModel)]="formData.email"
+    name="email"
+    type="email"
+  ></app-input-field>
+
   <app-input-field
     label="Validity (days)"
     id="validity"
+    [(ngModel)]="formData.validityDays"
+    name="validityDays"
     type="number"
   ></app-input-field>
 

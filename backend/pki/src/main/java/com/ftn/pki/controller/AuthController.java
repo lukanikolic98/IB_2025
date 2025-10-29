@@ -1,5 +1,6 @@
 package com.ftn.pki.controller;
 
+import com.ftn.pki.dto.JwtResponse;
 import com.ftn.pki.dto.LoginRequest;
 import com.ftn.pki.dto.LoginResponse;
 import com.ftn.pki.dto.RegisterRequest;
@@ -7,6 +8,7 @@ import com.ftn.pki.model.User;
 import com.ftn.pki.model.VerificationToken;
 import com.ftn.pki.repository.UserRepository;
 import com.ftn.pki.service.AuthService;
+import com.ftn.pki.service.CustomUserDetailsService;
 import com.ftn.pki.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -51,6 +53,9 @@ public class AuthController {
 
   @Autowired
   private AuthService authService;
+
+  @Autowired
+  private CustomUserDetailsService userDetailsService;
 
   @Autowired
   private JwtService jwtUtil;
@@ -117,5 +122,41 @@ public class AuthController {
     } catch (Exception e) {
       return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
     }
+  }
+
+  @PostMapping("/refresh")
+  public ResponseEntity<?> refresh(@RequestBody String refreshToken) {
+    String username = null;
+    try {
+      username = jwtUtil.extractUsername(refreshToken);
+    } catch (Exception e) {
+      // Greska pri parsiranju tokena
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token.");
+    }
+
+    if (username != null) {
+      Optional<User> optionalUser = userRepository.findByEmail(username);
+
+      if (optionalUser.isPresent()) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        // pozovi validateToken sa oba argumenta
+        if (jwtUtil.validateToken(refreshToken, userDetails)) {
+          User user = optionalUser.get();
+          String newAccessToken = jwtUtil.generateTokenFromUsername(username, 5 * 60 * 1000); // 5 min
+
+          return ResponseEntity.ok(new JwtResponse(
+              newAccessToken,
+              refreshToken,
+              user.getEmail(),
+              user.getFirstname(),
+              user.getLastname(),
+              user.getRole()));
+        }
+      } else {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found for this refresh token.");
+      }
+    }
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token.");
   }
 }

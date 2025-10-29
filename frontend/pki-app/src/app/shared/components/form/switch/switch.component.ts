@@ -1,16 +1,19 @@
 import { Component, Input, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormsModule,
-  NG_VALUE_ACCESSOR,
-  ControlValueAccessor,
-} from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-switch',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './switch.component.html',
+  imports: [CommonModule],
+  template: `
+    <label class="switch-container" (click)="toggle()">
+      <span class="switch-label">{{ label }}</span>
+      <div class="slider-container" [class.active]="checked">
+        <span class="slider"></span>
+      </div>
+    </label>
+  `,
   styleUrls: ['./switch.component.scss'],
   providers: [
     {
@@ -28,7 +31,7 @@ export class SwitchComponent implements ControlValueAccessor {
   private onTouched = () => {};
 
   writeValue(value: boolean): void {
-    this.checked = value ?? false;
+    this.checked = !!value;
   }
 
   registerOnChange(fn: (val: boolean) => void): void {
@@ -39,7 +42,7 @@ export class SwitchComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  toggle() {
+  toggle(): void {
     this.checked = !this.checked;
     this.onChange(this.checked);
     this.onTouched();

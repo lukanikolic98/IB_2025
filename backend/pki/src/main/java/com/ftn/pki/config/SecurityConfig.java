@@ -63,7 +63,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .requestMatchers("/auth/**").permitAll()
             .requestMatchers("/h2-console/**").permitAll()
-            .requestMatchers("/api/movies/**").permitAll()
+            .requestMatchers("/certificates/**").permitAll()
             .anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider());

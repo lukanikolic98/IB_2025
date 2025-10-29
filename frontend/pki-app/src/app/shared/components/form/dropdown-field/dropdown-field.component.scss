@@ -8,3 +8,10 @@
   color: #fff;
   margin-top: 4px;
 }
+
+/* When dropdown is focused (clicked/opened) */
+.form-input:focus {
+  color: #000; /* Text color becomes black */
+  background: rgba(255, 255, 255, 0.9); /* Optional: make background lighter */
+  outline: none; /* Optional: remove blue outline */
+}
