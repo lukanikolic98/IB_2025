@@ -54,16 +54,26 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
+        // disable CSRF (only for dev/testing; adjust for prod)
         .csrf(csrf -> csrf.disable())
+        // allow H2 console frames
+        .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+        // CORS if needed
         .cors(cors -> {
         })
+        // configure URL authorization
         .authorizeHttpRequests(auth -> auth
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .requestMatchers("/auth/**").permitAll()
+            .requestMatchers("/h2-console/**").permitAll()
             .anyRequest().authenticated())
-        .sessionManagement(session -> session
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authenticationProvider(authenticationProvider())
-        .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        // stateless sessions
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        // authentication provider
+        .authenticationProvider(authenticationProvider());
+
+    // JWT filter
+    http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

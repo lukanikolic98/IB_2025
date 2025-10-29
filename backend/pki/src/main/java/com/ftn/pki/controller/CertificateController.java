@@ -44,6 +44,7 @@ public class CertificateController {
   /**
    * vraca listu svih sertifikata.
    */
+  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
   @GetMapping
   public ResponseEntity<List<CertificateDto>> getAllCertificates() {
     return ResponseEntity.ok(certificateService.getAllCertificates());
@@ -89,13 +90,14 @@ public class CertificateController {
   // headers.setContentDispositionFormData("attachment", filename);
   // return new ResponseEntity<>(privateKeyData, headers, HttpStatus.OK);
   // }
-
+  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
   @GetMapping("/{id}/validate")
   public ResponseEntity<Boolean> isCertificateValid(@PathVariable Long id) {
     boolean isValid = certificateService.isCertificateValid(id);
     return new ResponseEntity<>(isValid, HttpStatus.OK);
   }
 
+  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
   @GetMapping("/{id}/download-keystore")
   public ResponseEntity<byte[]> downloadKeystore(@PathVariable Long id, @RequestParam String password) {
     try {
